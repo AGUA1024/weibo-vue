@@ -1,19 +1,18 @@
 <template>
-  <v-app id="app" class="blue-grey lighten-4" >
-    <v-app-bar color="transparent" elevation="0" app class="py-4">
-      <v-icon class="mb-6"  @click.stop="drawerMenuClick" v-if="screenIsSmall"
+  <v-app id="app" class="deep-purple lighten-5" >
+    <v-app-bar color="white" elevation="1" app class="py-4">
+      <v-icon class="mb-6 deep-purple--text"  @click.stop="drawerMenuClick" v-if="screenIsSmall"
       >$menu</v-icon
       >
       <v-row justify="space-between" v-if="!screenIsSmall">
-        <v-toolbar-title class="text-uppercase ">
-<!--          <span class="font-weight-light">AAE</span>-->
-<!--          <span>IdeaPro</span>-->
+        <v-toolbar-title class="text-uppercase deep-purple--text">
+          <!-- 可以添加标题 -->
         </v-toolbar-title>
 
         <v-col md="2" cols="12">
           <v-badge
               bottom
-              color="success"
+              color="deep-purple"
               overlap
               offset-x="12"
               offset-y="12"
@@ -27,42 +26,41 @@
             </v-avatar>
           </v-badge>
 
-          <v-btn text @click="logout" color="primary">
+          <v-btn text @click="logout" color="deep-purple">
             <span>退出</span>
             <v-icon right>exit_to_app</v-icon>
           </v-btn>
-<!--          搜索框  <search-box />-->
         </v-col>
       </v-row>
     </v-app-bar>
     <v-navigation-drawer
         width="230"
         v-model="drawer"
-        color="blue lighten-5"
+        color="white"
         app
         :mini-variant="miniDrawer"
+        class="navigation-drawer"
     >
       <v-list>
         <v-list-item>
           <v-list-item-avatar>
-            <v-icon size="35" v-if="!miniDrawer" color="primary">mdi-sina-weibo</v-icon>
-<!--            <svg-icon  v-if="!miniDrawer" :icon-class="appIcon" color="green"></svg-icon>-->
-            <v-icon size="20" class="mr-2" v-else @click.stop="drawerMenuClick"
+            <v-icon size="35" v-if="!miniDrawer" color="deep-purple">mdi-sina-weibo</v-icon>
+            <v-icon size="20" class="mr-2 deep-purple--text" v-else @click.stop="drawerMenuClick"
             >$menu</v-icon
             >
           </v-list-item-avatar>
-          <v-list-item-title class="font-black">{{appName}}舆情</v-list-item-title>
+          <v-list-item-title class="deep-purple--text font-weight-bold">{{appName}}舆情</v-list-item-title>
           <v-list-item-action>
-            <v-icon @click.stop="drawerMenuClick">$menu</v-icon>
+            <v-icon @click.stop="drawerMenuClick" class="deep-purple--text">$menu</v-icon>
           </v-list-item-action>
         </v-list-item>
       </v-list>
-      <v-divider inset class="mx-auto"></v-divider>
+      <v-divider class="mx-auto deep-purple lighten-3"></v-divider>
       <v-list nav color="transparent" flat class="mt-3">
         <v-list-item
             v-for="(navItem, index) in navItems"
             :key="index"
-            class="pr-6"
+            class="pr-6 my-1"
             link
             exact
             :to="navItem.link"
@@ -73,7 +71,6 @@
               <v-icon v-bind="attrs" v-on="on" class="mr-6">{{
                   navItem.icon
                 }}</v-icon>
-<!--              <svg-icon v-bind="attrs" :icon-class="navItem.icon" v-on="on" class="mr-6"/>-->
               <span>{{ navItem.title }}</span>
             </template>
             <span>{{ navItem.title }}</span>
@@ -86,7 +83,6 @@
         <router-view />
       </v-container>
     </v-main>
-<!--    <v-footer class="footer"><a :href="icp_link" target="_blank">{{icp}}</a></v-footer>-->
   </v-app>
 </template>
 
@@ -162,7 +158,7 @@ export default {
   mounted() {
     console.log('roles:' + this.roles)
     if(this.roles=='admin'){
-      this.navItems = this.adminNavItems
+      // this.navItems = this.adminNavItems
     }
   },
   methods: {
@@ -198,12 +194,20 @@ path {
   text-align: center;
 }
 .active-nav-link {
-  color: #0096BE !important;
-  /*color: #0096BE !important;*/
-  /*color: theme('primary') !important;*/
+  color: #673ab7 !important;
+  background-color: rgba(103, 58, 183, 0.1);
+  border-right: 3px solid #673ab7;
 }
 .d-hidden {
   opacity: 0;
+}
+
+.navigation-drawer {
+  border-right: 1px solid rgba(103, 58, 183, 0.1);
+}
+
+.deep-purple--text {
+  color: #673ab7 !important;
 }
 
 .footer {

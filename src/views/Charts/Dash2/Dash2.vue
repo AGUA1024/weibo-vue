@@ -34,7 +34,7 @@
           lg6
       >
         <v-basic-card
-            title="关键词词频分析[textrank]"
+            title="关键词词频分析"
             toolbar-height="56"
         >
           <template slot="card-content">
@@ -48,7 +48,7 @@
           lg6
       >
         <v-basic-card
-            title="关键词词频分析[tfidf]"
+            title="关键词词频分析"
             toolbar-height="56"
         >
           <template slot="card-content">

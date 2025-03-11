@@ -1,160 +1,156 @@
 <template>
-  <v-card>
-    <v-card-title>
-      通知管理
+  <div class="notice-container">
+    <v-card class="elevation-2 rounded-lg notice-card">
+      <v-card-title class="deep-purple--text">
+        <v-icon color="deep-purple" class="mr-2">mdi-bell-ring</v-icon>
+        通知管理
+        <v-btn
+            color="deep-purple"
+            class="pa-2 ml-3"
+            dark
+            elevation="2"
+            @click.prevent="addItem"
+        >
+          <v-icon dark left>
+            mdi-plus
+          </v-icon>
+          新增通知
+        </v-btn>
 
-            <v-btn
-                color="primary"
-                class="pa-2 ml-3"
-                @click.prevent="addItem"
+        <v-spacer></v-spacer>
+
+        <v-text-field
+            v-model="options.keyword"
+            append-icon="mdi-magnify"
+            label="按照关键词搜索"
+            single-line
+            hide-details
+            color="deep-purple"
+            dense
+            class="search-field"
+        ></v-text-field>
+      </v-card-title>
+      <v-data-table
+          :headers="headers"
+          :server-items-length="total"
+          :options.sync="options"
+          :items="datas"
+          :search="search"
+          class="elevation-0"
+          :footer-props="{
+            'items-per-page-options': [10, 15, 20],
+            'items-per-page-text': '每页显示',
+          }"
+      >
+        <template v-slot:item.cover="{ item }">
+          <v-avatar
+              tile>
+            <img
+                :src="getImg(item.cover)"
+                alt="picture"
             >
-              <v-icon dark>
-                mdi-plus
-              </v-icon>
-              新增
-            </v-btn>
-
-      <v-spacer></v-spacer>
-
-      <v-text-field
-          v-model="options.keyword"
-          append-icon="mdi-magnify"
-          label="按照 关键词 搜索"
-          single-line
-          hide-details
-      ></v-text-field>
-    </v-card-title>
-    <v-data-table
-        :headers="headers"
-        :server-items-length="total"
-        :options.sync="options"
-        :items="datas"
-        :search="search"
-    >
-      <template v-slot:item.cover="{ item }">
-        <v-avatar
-            tile>
-          <img
-              :src="getImg(item.cover)"
-              alt="picture"
-
+          </v-avatar>
+        </template>
+        
+        <template v-slot:item.create_time="{ item }">
+          <div class="grey--text text--darken-1">{{ item.create_time }}</div>
+        </template>
+        
+        <template v-slot:item.actions="{ item }">
+          <v-icon
+              small
+              class="mr-2"
+              color="deep-purple"
+              @click="editItem(item)"
           >
-        </v-avatar>
-      </template>
-      <template v-slot:top>
-        <v-dialog
-            v-model="dialog"
-            max-width="800px"
-        >
-          <v-card>
-            <v-card-title>
-              <span class="text-h5">{{ dialogTitle }}</span>
-            </v-card-title>
+            mdi-pencil
+          </v-icon>
+          <v-icon
+              color="red"
+              small
+              @click="deleteItem(item)"
+          >
+            mdi-delete
+          </v-icon>
+        </template>
+        
+        <template v-slot:top>
+          <v-dialog
+              v-model="dialog"
+              max-width="800px"
+          >
+            <v-card>
+              <v-card-title class="deep-purple white--text">
+                <span class="text-h5">{{ dialogTitle }}</span>
+              </v-card-title>
 
-            <v-card-text>
-              <v-container>
-                <v-row>
+              <v-card-text class="pt-5">
+                <v-container>
+                  <v-row>
+                    <!-- 第一行 -->
+                    <v-col
+                        cols="12"
+                        sm="6"
+                        md="4"
+                    >
+                      <v-text-field
+                          v-model="editedItem.creator"
+                          label="创建者"
+                          outlined
+                          color="deep-purple"
+                      ></v-text-field>
+                    </v-col>
+                    <v-col
+                        cols="12"
+                        sm="6"
+                        md="4"
+                    >
+                      <v-text-field
+                          v-model="editedItem.create_time"
+                          label="创建时间"
+                          outlined
+                          color="deep-purple"
+                      ></v-text-field>
+                    </v-col>
 
-<!--                  第一行-->
+                    <!-- 第二行 -->
+                    <v-col
+                        cols="12"
+                    >
+                      <v-text-field
+                          v-model="editedItem.content"
+                          label="通知内容"
+                          outlined
+                          color="deep-purple"
+                      ></v-text-field>
+                    </v-col>
+                  </v-row>
+                </v-container>
+              </v-card-text>
 
-                  <v-col
-                      cols="12"
-                      sm="6"
-                      md="4"
-                  >
-                    <v-text-field
-                        v-model="editedItem.creator"
-                        label="创建者"
-                        outlined
-                        color="secondary"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col
-                      cols="12"
-                      sm="6"
-                      md="4"
-                  >
-                    <v-text-field
-                        v-model="editedItem.create_time"
-                        label="创建时间"
-                        outlined
-                        color="secondary"
-                    ></v-text-field>
-                  </v-col>
-
-                  <!--     第二行-->
-
-                  <v-col
-                      cols="12"
-                      sm="12"
-                      md="12"
-                  >
-                    <v-text-field
-                        v-model="editedItem.content"
-                        label="通知内容"
-                        outlined
-                        color="secondary"
-                    ></v-text-field>
-                  </v-col>
-
-
-
-                    <!--                  第三行-->
-
-
-<!--                  第四行-->
-
-                        <!--                  第五行-->
-
-                    <!--                  第六行-->
-
-
-                </v-row>
-
-              </v-container>
-            </v-card-text>
-
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn
-                  color="blue darken-1"
-                  text
-                  @click="close"
-              >
-                取消
-              </v-btn>
-              <v-btn
-                  color="blue darken-1"
-                  text
-                  @click="save"
-              >
-                保存
-              </v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
-      </template>
-
-      <template v-slot:item.actions="{ item }">
-        <v-icon
-            small
-            class="mr-2"
-            color="blue"
-            @click="editItem(item)"
-        >
-          mdi-pencil
-        </v-icon>
-        <v-icon
-            color="red"
-            small
-            @click="deleteItem(item)"
-        >
-          mdi-delete
-        </v-icon>
-      </template>
-
-    </v-data-table>
-  </v-card>
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn
+                    color="grey darken-1"
+                    text
+                    @click="close"
+                >
+                  取消
+                </v-btn>
+                <v-btn
+                    color="deep-purple"
+                    text
+                    @click="save"
+                >
+                  保存
+                </v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
+        </template>
+      </v-data-table>
+    </v-card>
+  </div>
 </template>
 
 <script>
@@ -274,5 +270,39 @@ export default {
 </script>
 
 <style scoped>
+.notice-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 20px;
+}
 
+.notice-card {
+  border: 1px solid rgba(103, 58, 183, 0.1);
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.notice-card:hover {
+  box-shadow: 0 5px 15px rgba(103, 58, 183, 0.15) !important;
+}
+
+.deep-purple {
+  background-color: #673ab7 !important;
+}
+
+.deep-purple--text {
+  color: #673ab7 !important;
+}
+
+.search-field {
+  max-width: 300px;
+}
+
+.v-data-table >>> th {
+  background-color: rgba(103, 58, 183, 0.05) !important;
+}
+
+.v-data-table >>> .v-data-footer {
+  border-top: 1px solid rgba(103, 58, 183, 0.1);
+}
 </style>
