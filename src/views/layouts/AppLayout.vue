@@ -58,24 +58,54 @@
       <v-divider class="mx-auto deep-purple lighten-3"></v-divider>
       <v-list nav color="transparent" flat class="mt-3">
         <v-list-item
-            v-for="(navItem, index) in navItems"
+            v-for="(navItem, index) in navItems.filter(item => !item.children)"
             :key="index"
-            class="pr-6 my-1"
+            class="pr-6 my-2 menu-item"
             link
             exact
             :to="navItem.link"
             exact-active-class="active-nav-link"
         >
-          <v-tooltip nudge-right="8" right :z-index="miniDrawer ? 900000 : -5">
-            <template v-slot:activator="{ on, attrs }">
-              <v-icon v-bind="attrs" v-on="on" class="mr-6">{{
-                  navItem.icon
-                }}</v-icon>
-              <span>{{ navItem.title }}</span>
-            </template>
-            <span>{{ navItem.title }}</span>
-          </v-tooltip>
+          <v-list-item-icon class="mr-3 my-0 align-self-center">
+            <v-icon>{{ navItem.icon }}</v-icon>
+          </v-list-item-icon>
+          <v-list-item-content class="py-0">
+            <v-list-item-title>{{ navItem.title }}</v-list-item-title>
+          </v-list-item-content>
         </v-list-item>
+
+        <v-list-group
+            v-for="(navItem, index) in navItems.filter(item => item.children)"
+            :key="`group-${index}`"
+            no-action
+            class="my-1 folder-group"
+            color="deep-purple"
+        >
+          <template v-slot:activator>
+            <v-list-item-icon class="mr-3 my-0 align-self-center">
+              <v-icon>{{ navItem.icon }}</v-icon>
+            </v-list-item-icon>
+            <v-list-item-content class="py-0">
+              <v-list-item-title>{{ navItem.title }}</v-list-item-title>
+            </v-list-item-content>
+          </template>
+
+          <v-list-item
+              v-for="(childItem, childIndex) in navItem.children"
+              :key="`child-${index}-${childIndex}`"
+              :to="childItem.link"
+              link
+              class="pl-5 my-1 child-item"
+              exact-active-class="active-nav-link"
+          >
+            <v-list-item-icon class="mr-3 my-0 align-self-center">
+              <v-icon size="18">{{ childItem.icon }}</v-icon>
+            </v-list-item-icon>
+            <v-list-item-content class="py-0">
+              <v-list-item-title class="subtitle-2">{{ childItem.title }}</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+        </v-list-group>
       </v-list>
     </v-navigation-drawer>
     <v-main class="mb-16 pb-16 mx-md-10 mx-3">
@@ -103,51 +133,61 @@ export default {
       },
       {
         title: "搜索",
-        icon: "mdi-cube",
+        icon: "mdi-magnify",
         link: "/library",
       },
-
       {
-        title: "数据大屏",
-        icon: "mdi-monitor-screenshot",
-        link: "/dash1c",
+        title: "数据可视化",
+        icon: "mdi-chart-box-outline",
+        children: [
+          {
+            title: "数据大屏",
+            icon: "mdi-monitor-dashboard",
+            link: "/dash1c",
+          },
+          {
+            title: "关键词分析",
+            icon: "mdi-key-variant",
+            link: "/dash2",
+          },
+          {
+            title: "趋势分析",
+            icon: "mdi-chart-line",
+            link: "/dash2k",
+          }
+        ]
       },
       {
-        title: "关键词分析",
-        icon: "mdi-file-word-box",
-        link: "/dash2",
-      },
-      {
-        title: "数据分析",
-        icon: "mdi-chart-areaspline",
-        link: "/dash2k",
-      },
-      {
-        title: "话题跟踪",
-        icon: "mdi-emoticon-wink",
-        link: "/dash2kp",
-      },
-      {
-        title: "词云分析",
-        icon: "mdi-file-word-box",
-        link: "/dash3",
-      },
-      {
-        title: "文本舆情分析",
-        icon: "mdi-wordpress",
-        link: "/predict",
-      },
-      {
-        title: "微博舆情",
-        icon: "mdi-sina-weibo",
-        link: "/yuqing",
+        title: "舆情监测",
+        icon: "mdi-eye-outline",
+        children: [
+          {
+            title: "话题跟踪",
+            icon: "mdi-tag-outline",
+            link: "/dash2kp",
+          },
+          {
+            title: "词云分析",
+            icon: "mdi-cloud-outline",
+            link: "/dash3",
+          },
+          {
+            title: "情感分析",
+            icon: "mdi-emoticon-outline",
+            link: "/predict",
+          },
+          {
+            title: "微博热点",
+            icon: "mdi-sina-weibo",
+            link: "/yuqing",
+          }
+        ]
       },
       {
         title: "设置",
-        icon: "mdi-cog",
+        icon: "mdi-cog-outline",
         link: "/settings",
       },
-
     ],
     adminNavItems: [{
       title: "通知管理",
@@ -216,5 +256,69 @@ path {
   width: 100%;
   display: flex;
   justify-content: center;
+}
+
+/* 文件夹样式优化 */
+.folder-group {
+  margin-bottom: 8px !important;
+}
+
+.folder-title {
+  font-weight: 400 !important;
+  font-size: 0.9rem !important;
+  letter-spacing: normal;
+}
+
+.v-list-group__header {
+  padding-left: 16px !important;
+  min-height: 40px !important;
+}
+
+.v-list-group__header .v-list-item__icon {
+  margin-right: 12px !important;
+}
+
+.child-item {
+  min-height: 36px !important;
+  border-radius: 4px;
+  margin-left: 8px;
+  margin-right: 8px;
+  transition: all 0.2s ease;
+}
+
+.child-item:hover {
+  background-color: rgba(103, 58, 183, 0.05);
+}
+
+.v-list-group__header.v-list-item--active {
+  color: #673ab7 !important;
+}
+
+.v-list-group__header.v-list-item--active::before {
+  opacity: 0.12;
+  background-color: #673ab7;
+}
+
+/* 图标样式优化 */
+.v-list-item__icon {
+  margin: 0 !important;
+  min-width: 24px;
+  display: flex;
+  justify-content: center;
+}
+
+.child-item .v-list-item__content {
+  padding: 8px 0;
+}
+
+/* 菜单项统一样式 */
+.menu-item {
+  min-height: 40px !important;
+  padding-left: 16px !important;
+}
+
+.v-list-item__title {
+  font-size: 0.9rem !important;
+  font-weight: 400 !important;
 }
 </style>
